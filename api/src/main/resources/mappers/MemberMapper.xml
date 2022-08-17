@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.api.mapper.MemberMapper">
+	
+	<!-- 포인트조회 -->
+	<insert id="joinMember" parameterType="Member">
+		INSERT INTO MEMBER 
+    		(EMAIL, NICKNAME, NAME, PASSWORD, TEL)
+		VALUES
+    		(#{email},#{nickname},#{name},#{password},#{tel})	
+	</insert>
+	
+	<!-- 회원존재 여부조회 -->
+	<select id="getMemberByEmail" resultType="String" parameterType="String">
+		SELECT EMAIL, NICKNAME, NAME, PASSWORD, TEL				
+		FROM   MEMBER		  		
+		WHERE  EMAIL = #{email}	
+	</select>
+	
+</mapper>
