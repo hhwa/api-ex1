@@ -10,11 +10,16 @@
     		(#{email},#{nickname},#{name},#{password},#{tel})	
 	</insert>
 	
-	<!-- 회원존재 여부조회 -->
-	<select id="getMemberByEmail" resultType="String" parameterType="String">
+	<select id="getMemberByEmail" resultType="Member" parameterType="String">
 		SELECT EMAIL, NICKNAME, NAME, PASSWORD, TEL				
 		FROM   MEMBER		  		
 		WHERE  EMAIL = #{email}	
+	</select>
+	
+	<select id="getMemberByTel" resultType="String" parameterType="String">
+		SELECT NAME				
+		FROM   MEMBER		  		
+		WHERE  TEL = #{tel}	
 	</select>
 	
 </mapper>

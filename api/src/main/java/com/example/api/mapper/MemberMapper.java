@@ -9,6 +9,7 @@ public interface MemberMapper {
 	
 	void joinMember(Member member);
 	String getMemberByEmail(String email);
+	String getMemberByTel(String tel);
 	
 
 }
