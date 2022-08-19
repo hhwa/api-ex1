@@ -6,8 +6,10 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class Member {
 
 	@NotBlank(message = "enter a email")
@@ -18,8 +20,7 @@ public class Member {
     @Size(min = 2, max = 10, message = "nickname is between 2 and 10 length")
 	private String nickname;
 	
-	@NotBlank(message = "enter a nickname")
-    @Size(min = 8, max = 20, message = "password is between 2 and 20 length")
+	@NotBlank(message = "enter a password")
 	private String password;
 	
 	@NotBlank(message = "enter a name")

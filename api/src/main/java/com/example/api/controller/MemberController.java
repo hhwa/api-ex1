@@ -1,59 +1,79 @@
 package com.example.api.controller;
 
-import java.util.Random;
+import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import com.example.api.domain.Member;
+import com.example.api.service.CertificationService;
 import com.example.api.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 
-@RestController
 @RequiredArgsConstructor
+@RestController
 public class MemberController {
 
 	private final MemberService memberService;
 	
-	@PostMapping("/join/mem")
-	public boolean joinMember(@RequestBody Member member) {
-		return true;
+	private final CertificationService certificationService;
+	
+	@PostMapping("/member/join")
+	public ResponseEntity<Void> joinMember(@Valid @RequestBody Member member) {
+		if(certificationService.verifyCompleteKey(member.getTel())) {
+			return ResponseEntity.badRequest().build();
+		}
+		memberService.joinMember(member);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
 	
+	@GetMapping("/member/exists/emails/{email}")
+    public ResponseEntity<Boolean> checkEmailDuplicate(@PathVariable String email) {
+        return ResponseEntity.ok(memberService.checkEmailDuplicate(email));
+    }
+
+    @GetMapping("/member/exists/nicknames/{nickname}")
+    public ResponseEntity<Boolean> checkNicknameDuplicate(@PathVariable String nickname) {
+        return ResponseEntity.ok(memberService.checkNicknameDuplicate(nickname));
+    }
 
 	@PostMapping("/login")
-	public boolean memberLogin(@RequestBody Member member) {
+	public void memberLogin(@RequestBody Member member) {
+		memberService.login(member);
+	}
+	
+	@DeleteMapping("/logout")
+	public boolean memberLogout() {
+		memberService.logout();
 		return true;
 	}
 	
-	@GetMapping("/memberinfo/{flag}")
-	public boolean getMemberInfo(@PathVariable("flag") String flag) {
-		memberService.getMemberByTel(flag);
-		return true;
+	@GetMapping("/myinfo")
+	public ResponseEntity<Member> getMemberInfo(@SessionAttribute(name ="email", required = false) String email) {
+		Member memberInfo = memberService.getMemberByEmail(email);
+		return ResponseEntity.ok(memberInfo);
 	}
 	
-	
-	public void searchPassword() {
-		
+	@PatchMapping("/searchPassword")
+	public void searchPassword(@SessionAttribute(name ="email", required = false) String email,
+			@RequestBody Member member) {
+		if(email == null) {
+			if(certificationService.verifyCompleteKey(member.getTel())) {
+				memberService.searchPassword(member);
+			}
+			
+		}
 	}
 	
 	
 }
-
-/*
-* 회원 가입 기능
-전화번호 인증 후 회원가입이 가능해야 합니다.
-* 로그인 기능
-식별 가능한 모든 정보로 로그인이 가능해야 합니다.
-식별 가능한 모든 정보가 무엇인지는 스스로 판단하여 결정하시면 됩니다.
-예) 아이디 혹은 전화번호 + 비밀번호를 입력하면 로그인이 가능합니다.
-* 내 정보 보기 기능
-* 비밀번호 찾기 ( 재설정 ) 기능
-로그인 되어 있지 않은 상태에서 비밀번호를 재설정하는 기능입니다.
-전화번호 인증 후 비밀번호 재설정이 가능해야 합니다.
-
-*/

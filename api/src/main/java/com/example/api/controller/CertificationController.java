@@ -1,29 +1,31 @@
 package com.example.api.controller;
 
-import java.util.Random;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
+import com.example.api.domain.Certification;
 import com.example.api.service.CertificationService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@RestController
 public class CertificationController {
 	
-	@Autowired
-	CertificationService certificationService;
+	private final CertificationService certificationService;
 
-	@GetMapping("/check/sendSMS")
-    public @ResponseBody String sendSMS(String tel) {
-
-        Random rand  = new Random();
-        String numStr = "";
-        for(int i=0; i<6; i++) {
-            String ran = Integer.toString(rand.nextInt(10));
-            numStr+=ran;
-        }
-
-        certificationService.certifiedPhoneNumber(tel,numStr);
-        return numStr;
+	@PostMapping("/certification/send")
+    public ResponseEntity<Void> sendSms(@RequestBody Certification certification) {
+        certificationService.certificatedPhoneNumber(certification.getTel());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+	
+	 @PostMapping("/certification/confirms")
+	 public ResponseEntity<Void> SmsVerification(@RequestBody Certification certification) {
+		 certificationService.verifySms(certification);
+		 return ResponseEntity.ok().build();
+	 }
 }

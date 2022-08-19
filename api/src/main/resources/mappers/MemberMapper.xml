@@ -11,15 +11,41 @@
 	</insert>
 	
 	<select id="getMemberByEmail" resultType="Member" parameterType="String">
-		SELECT EMAIL, NICKNAME, NAME, PASSWORD, TEL				
+		SELECT EMAIL,NICKNAME,NAME,PASSWORD,TEL				
 		FROM   MEMBER		  		
 		WHERE  EMAIL = #{email}	
 	</select>
 	
-	<select id="getMemberByTel" resultType="String" parameterType="String">
-		SELECT NAME				
+	<select id="getMemberCheck" resultType="Member" parameterType="Member">
+		SELECT EMAIL,NICKNAME,NAME,PASSWORD,TEL					
+		FROM   MEMBER		  		
+		WHERE  (NICKNAME = #{nickname} OR TEL = #{tel} OR EMAIL = #{email} )
+		AND    PASSWORD = #{password}
+	</select>
+	
+	<select id="existMemberByEmail" resultType="int" parameterType="String">
+		SELECT COUNT(*)				
+		FROM   MEMBER		  		
+		WHERE  EMAIL = #{email}	
+	</select>
+	
+	<select id="existMemberByTel" resultType="int" parameterType="String">
+		SELECT COUNT(*)				
 		FROM   MEMBER		  		
 		WHERE  TEL = #{tel}	
 	</select>
+	
+	<select id="existMemberByNickname" resultType="int" parameterType="String">
+		SELECT COUNT(*)				
+		FROM   MEMBER		  		
+		WHERE  NICKNAME = #{nickname}	
+	</select>
+	
+	<update id="updatePassword" parameterType="Member">
+		UPDATE MEMBER
+		SET PASSWORD = #{password}
+		WHERE (NICKNAME = #{nickname} OR TEL = #{tel} OR EMAIL = #{email} )
+	</update>
+	
 	
 </mapper>

@@ -8,8 +8,12 @@ import com.example.api.domain.Member;
 public interface MemberMapper {
 	
 	void joinMember(Member member);
-	String getMemberByEmail(String email);
-	String getMemberByTel(String tel);
+	Member getMemberByEmail(String email);
+	Member getMemberCheck(Member member);
+	int existMemberByEmail(String email);
+	int existMemberByTel(String tel);
+	int existMemberByNickname(String nickname);
+	void updatePassword(Member member);
 	
 
 }
